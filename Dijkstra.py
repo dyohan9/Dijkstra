@@ -3,60 +3,62 @@
 import collections
 
 class Graph:
-  def __init__(self):# Inicializacao da classe
-    self.nodes = set()
-    self.edges = collections.defaultdict(list)
-    self.costs = {}
+    def __init__(self):  # inicializacao da classe
+        self.nodes = set()
+        self.edges = collections.defaultdict(list)
+        self.costs = {}
 
-  def add_node(self, node):# adiciona no
-    for name in node:
-        self.nodes.add(name)
+    def add_node(self, node):  # adiciona no
+        for name in node:
+            self.nodes.add(name)
 
-  def add_edge(self, from_node, to_node, cost):# adiciona caminho
-    self.edges[from_node].append(to_node)# adiciona no de destino no vetor de conexoes do no de origem
-    self.edges[to_node].append(from_node)# adiciona no de origem no vetor de conexoes do no de destino
-    self.costs[(from_node, to_node)] = cost# atribui custo do deslocamento
-
-
-def dijsktra(graph, initial):# resolve caminho mais curto
-  visited = {initial: 0}# inicia a lista de nos visitados e adiciona o no inicial como custo 0
-  path = {}
-
-  nodes = set(graph.nodes)# recupera os nos associado ao grafo
-
-  while nodes:
-    min_node = None# no de menor custo
-    for node in nodes:
-      if node in visited:# o no e primeiramente adicionado como visitado, depois e processado (exemplo: no inicial)
-        if min_node is None:# descobre qual o no de menor custo
-          min_node = node
-        elif visited[node] < visited[min_node]:
-          min_node = node
-
-    if min_node is None:#
-      break
-
-    nodes.remove(min_node)
-    current_weight = visited[min_node]
-
-    for edge in graph.edges[min_node]:
-      print(edge)
-      weight = current_weight + graph.costs[(min_node, edge)]
-      if edge not in visited or weight < visited[edge]:
-        visited[edge] = weight
-        path[edge] = min_node
-
-  return visited, path
+    def add_edge(self, node_a, node_b, cost):  # adiciona caminho
+        self.edges[node_a].append(node_b)  # adiciona no b no vetor de conexoes do no a
+        self.edges[node_b].append(node_a)  # adiciona no a no vetor de conexoes do no b
+        self.costs[(node_a, node_b)] = cost  # atribui custo do deslocamento
+        self.costs[(node_b, node_a)] = cost
 
 
+def dijsktra(graph, initial):  # resolve caminho menor custo
+    visited = {initial: 0}  # {no: menor custo}
+    nodes = set(graph.nodes)  # recupera os nos associado ao grafo
+    path = {}   # {no: no de origem que prove menor custo}
 
+    while nodes:
+        min_node = None  # no de menor custo
+        for node in nodes:  # dos nos visitados, acha o que tem menor custo
+            if node in visited:  # o no e primeiramente adicionado como visitado, depois e processado (exemplo: no inicial)
+                if min_node is None:  # descobre qual o no de menor custo
+                    min_node = node  # primeiro teste
+                elif visited[node] < visited[min_node]:  # substitui pelo no se seu custo for menor
+                    min_node = node
 
+        if min_node is None:  # nenhum no nunca foi visitado (if node in visited), ou seja, nao existem nos ou o inicial nunca foi especificado
+            break  # cancela
 
+        nodes.remove(min_node)  # nao testa mais
 
+        # acaba testando duas vezes o mesmo caminho, uma vez em direcao ao ponto e outra a partir do ponto
+        for edge in graph.edges[min_node]:  # para cada conexao
+            cost = visited[min_node] + graph.costs[(min_node, edge)]    # candidato a menor custo
+            if edge not in visited or cost < visited[edge]: # primeira vez testado caminho para o no ou reducao de custo pelo novo caminho
+                visited[edge] = cost
+                path[edge] = min_node
 
+    return visited, path
 
+def caminho(graph, inicial, final):
+    visited, path = dijsktra(graph,inicial) # resolve o menor caminho
+    trajeto = []    # inicialia lista do caminho
+    atual = final
+    while atual is not inicial:    # trilha o caminho e adiciona o trajeto na lista do final ao inicial
+        trajeto.append(atual)
+        atual = path[atual]
 
+    trajeto.append(atual)   # adiciona o inicial
+    trajeto.reverse()   # vira a lista para mostrar caminho inicial ao final
 
+    return visited[final], trajeto
 
 
 

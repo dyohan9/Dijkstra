@@ -1,20 +1,24 @@
 # Da o menor caminho para cada no apartir do no inicial
 
-import Dijkstra as dij
+#import Dijkstra as dij
 
-grafo = dij.Graph()
-grafo.add_node('a')
-grafo.add_node(['b','c'])
-grafo.add_edge('a','b',1)
-grafo.add_edge('a','c',2)
-grafo.add_edge('b','c',3)
+from Dijkstra import *
 
-print(grafo.nodes)
-print(grafo.edges)
-print(grafo.costs)
+grafo = Graph()
+grafo.add_node(['a','b','c','d'])
+grafo.add_edge('a','b',3)
+grafo.add_edge('a','c',1)
+grafo.add_edge('b','d',1)
+grafo.add_edge('c','d',2)
 
-#dij.dijsktra(grafo,'a')
+#print grafo.nodes
+#print grafo.edges
+#print grafo.costs
 
+#custo, caminho = dijsktra(grafo,'a')
 
+#print custo
+#print caminho
 
+print caminho(grafo,'a','d')
 
